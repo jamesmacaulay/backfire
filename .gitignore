@@ -1,0 +1,8 @@
+.DS_Store
+
+*.orig
+
+.dotest
+
+config.yml
+last_updated_at
