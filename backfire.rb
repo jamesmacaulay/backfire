@@ -86,11 +86,11 @@ module Backfire
   
   def self.go(interval = 20)# seconds    
     puts 'Starting backfire'
-    last_run = Time.now
+    last_run = 0
     while not exit   
-      if Time.now - last_run > interval
+      if Time.now.to_i - last_run > interval
         update_campfire
-        last_run = Time.now
+        last_run = Time.now.to_i
       end
       sleep 5
     end
