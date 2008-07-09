@@ -88,7 +88,7 @@ module Backfire
     puts 'Starting backfire'
     last_run = Time.now
     while not exit   
-      if last_run - Time.now > interval
+      if Time.now - last_run > interval
         update_campfire
         last_run = Time.now
       end
