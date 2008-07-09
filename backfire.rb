@@ -73,7 +73,7 @@ module Backfire
         user_entries = user_entries.sort {|a,b| b.updated_at <=> a.updated_at }
         latest_updated_at = status.updated_at if status and status.updated_at > latest_updated_at
         latest_updated_at = user_entries.first.updated_at if user_entries.first and user_entries.first.updated_at > latest_updated_at
-        unless user_entries.empty? and (self.last_updated_at ? status.updated_at < self.last_updated_at : true)
+        unless user_entries.empty? and (self.last_updated_at ? status.updated_at <= self.last_updated_at : true)
           update << "\n#{user.name}: #{status.message unless user_statuses.empty?}\n"
           user_entries.each do |entry|
             update << "  * #{entry.body}\n"
@@ -127,7 +127,7 @@ module Backfire
     def self.new_entries
       entries = Backfire.backpack.list_journal_entries['journal-entry']
       if Backfire.last_updated_at
-        entries = entries.reject {|e| Time.parse(e['updated-at'].first['content']) < Backfire.last_updated_at}
+        entries = entries.reject {|e| Time.parse(e['updated-at'].first['content']) <= Backfire.last_updated_at}
       end
       entries.map {|e| self.new(e)}
     end
