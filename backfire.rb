@@ -61,7 +61,7 @@ module Backfire
   
   def self.update_campfire
     puts "*** update_campfire"
-    latest_updated_at = Time.at(0)
+    latest_updated_at = self.last_updated_at || Time.at(0)
     statuses = Status.all
     entries = JournalEntry.new_entries
     unless entries.empty? && self.last_updated_at && !(statuses.find {|s| s.updated_at > self.last_updated_at})
