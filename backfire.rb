@@ -29,7 +29,7 @@ module Backfire
   
   def self.room(id = nil)
     id ||= config['campfire']
-    Tinder::Room.new(campfire, 100257)
+    Tinder::Room.new(campfire, id)
   end
   
   def self.last_updated_at
