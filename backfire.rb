@@ -71,7 +71,7 @@ module Backfire
         user_statuses, user_entries = user_array.last.partition {|item| item.is_a? Status}
         status = user_statuses.first
         user_entries = user_entries.sort {|a,b| b.updated_at <=> a.updated_at }
-        latest_updated_at = status.updated_at if status.updated_at and status.updated_at > latest_updated_at
+        latest_updated_at = status.updated_at if status and status.updated_at > latest_updated_at
         latest_updated_at = user_entries.first.updated_at if user_entries.first and user_entries.first.updated_at > latest_updated_at
         unless user_entries.empty? and (self.last_updated_at ? status.updated_at < self.last_updated_at : true)
           update << "\n#{user.name}: #{status.message unless user_statuses.empty?}\n"
