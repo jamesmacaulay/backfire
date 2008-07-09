@@ -64,7 +64,7 @@ module Backfire
     latest_updated_at = Time.at(0)
     statuses = Status.all
     entries = JournalEntry.new_entries
-    unless entries.empty? && self.last_updated_at && !(statuses.find {|s| s.updated_at >= self.last_updated_at})
+    unless entries.empty? && self.last_updated_at && !(statuses.find {|s| s.updated_at > self.last_updated_at})
       update = ''
       (entries + statuses).group_by(&:user).each do |user_array|
         user = user_array.first
