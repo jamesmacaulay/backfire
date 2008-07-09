@@ -39,8 +39,8 @@ module Backfire
     end
   end
   
-  def self.is_now_updated
-    @@last_updated_at = Time.now
+  def self.is_now_updated(time)
+    @@last_updated_at = time
     File.open(LAST_UPDATED_AT_FILE, 'w+') do |file|
       file.write(@@last_updated_at.to_s)
     end
@@ -61,6 +61,7 @@ module Backfire
   
   def self.update_campfire
     puts "*** update_campfire"
+    latest_updated_at = Time.at(0)
     statuses = Status.all
     entries = JournalEntry.new_entries
     unless entries.empty? && self.last_updated_at && !(statuses.find {|s| s.updated_at >= self.last_updated_at})
@@ -70,6 +71,8 @@ module Backfire
         user_statuses, user_entries = user_array.last.partition {|item| item.is_a? Status}
         status = user_statuses.first
         user_entries = user_entries.sort {|a,b| b.updated_at <=> a.updated_at }
+        latest_updated_at = status.updated_at if status.updated_at > latest_updated_at
+        latest_updated_at = user_entries.first.updated_at if user_entries.first and user_entries.first.updated_at > latest_updated_at
         unless user_entries.empty? and (self.last_updated_at ? status.updated_at < self.last_updated_at : true)
           update << "\n#{user.name}: #{status.message unless user_statuses.empty?}\n"
           user_entries.each do |entry|
@@ -81,7 +84,7 @@ module Backfire
       puts "*** Pasted to campfire:\n"
       puts update
     end
-    self.is_now_updated
+    self.is_now_updated(latest_updated_at)
   end
   
   def self.go(interval = 20)# seconds    
