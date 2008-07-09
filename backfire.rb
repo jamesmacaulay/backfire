@@ -1,12 +1,15 @@
 require 'lib/tinder/lib/tinder'
 require 'lib/backpack_api_wrapper'
 require 'rubygems'
-require 'active_support'
+require 'active_support'    
+
 
 module Backfire
   LAST_UPDATED_AT_FILE='last_updated_at'
   CONFIG_FILE='config.yml'
-  @@last_updated_at = nil
+  @@last_updated_at = nil  
+  
+  mattr_accessor :exit
   
   def self.config
     @@config ||= YAML.load(File.read(CONFIG_FILE))
@@ -81,10 +84,15 @@ module Backfire
     self.is_now_updated
   end
   
-  def self.go(interval = 20)# seconds
-    while true
-      update_campfire
-      sleep interval
+  def self.go(interval = 20)# seconds    
+    puts 'Starting backfire'
+    last_run = Time.now
+    while not exit   
+      if last_run - Time.now > interval
+        update_campfire
+        last_run = Time.now
+      end
+      sleep 5
     end
   end
   
@@ -138,6 +146,10 @@ module Backfire
   end
 
   
-end # module Backfire
+end # module Backfire                             
+
+trap('TERM') { puts 'Exiting...'; Backfire.exit = true }
+trap('INT')  { puts 'Exiting...'; Backfire.exit = true }
+
 
 Backfire.go(Backfire.config['global']['interval'])
