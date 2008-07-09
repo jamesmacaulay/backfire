@@ -28,7 +28,7 @@ module Backfire
   end
   
   def self.room(id = nil)
-    id ||= config['campfire']
+    id ||= config['campfire']['default_room']
     Tinder::Room.new(campfire, id)
   end
   
