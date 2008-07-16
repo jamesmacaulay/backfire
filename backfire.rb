@@ -63,7 +63,7 @@ module Backfire
     puts "*** update_campfire"
     latest_updated_at = self.last_updated_at || Time.at(0)
     statuses = Status.all
-    entries = JournalEntry.new_entries
+    entries = config['campfire']['update_journal_entries'] ? JournalEntry.new_entries : []
     unless entries.empty? && self.last_updated_at && !(statuses.find {|s| s.updated_at > self.last_updated_at})
       update = ''
       (entries + statuses).group_by(&:user).each do |user_array|
@@ -73,7 +73,7 @@ module Backfire
         user_entries = user_entries.sort {|a,b| b.updated_at <=> a.updated_at }
         latest_updated_at = status.updated_at if status and status.updated_at > latest_updated_at
         latest_updated_at = user_entries.first.updated_at if user_entries.first and user_entries.first.updated_at > latest_updated_at
-        unless user_entries.empty? and (self.last_updated_at ? status.updated_at <= self.last_updated_at : true)
+        unless user_entries.empty? and (!(config['campfire']['update_statuses']) or (self.last_updated_at ? status.updated_at <= self.last_updated_at : true))
           update << "\n#{user.name}: #{status.message unless user_statuses.empty?}\n"
           user_entries.each do |entry|
             update << "  * #{entry.body}\n"

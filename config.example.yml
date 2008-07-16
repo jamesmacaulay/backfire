@@ -7,6 +7,8 @@ campfire:
   password: 'secret'
   default_room: 1234
   test_mode: false
+  update_statuses: true
+  update_journal_entries: true
   ssl: true
   
 backpack:
